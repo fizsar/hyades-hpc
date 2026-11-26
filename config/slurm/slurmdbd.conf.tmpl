@@ -1,0 +1,12 @@
+# Plantilla: la contraseña se inyecta en el arranque (no está en el repo).
+AuthType=auth/munge
+DbdHost=control
+DbdPort=6819
+SlurmUser=slurm
+PidFile=/run/slurm/slurmdbd.pid
+StorageType=accounting_storage/mysql
+StorageHost=mariadb
+StoragePort=3306
+StorageUser=slurm
+StoragePass=@DBPASS@
+StorageLoc=slurm_acct_db

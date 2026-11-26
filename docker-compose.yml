@@ -1,0 +1,80 @@
+# Hyades: clúster de laboratorio con Slurm. SPDX-License-Identifier: AGPL-3.0-only
+x-node: &node
+  image: hyades-base:local
+  init: true
+  restart: unless-stopped
+  depends_on:
+    init: { condition: service_completed_successfully }
+  volumes:
+    - secrets:/secrets:ro
+    - home:/home
+    - images:/srv/images
+    - ./config/slurm/slurm.conf:/etc/slurm/slurm.conf:ro
+    - ./config/slurm/cgroup.conf:/etc/slurm/cgroup.conf:ro
+
+services:
+  # Una sola vez por arranque: secretos (solo la primera vez) y homes.
+  init:
+    build: .
+    image: hyades-base:local
+    command: ["init"]
+    restart: "no"
+    volumes:
+      - secrets:/secrets
+      - home:/home
+      - images:/srv/images
+      - ./jobs:/opt/hyades/jobs:ro
+
+  mariadb:
+    image: mariadb:11.4@sha256:a8992b5e5404d11e03c54a31d0c1bdea3fd116d283aa6d1a627551f29045309b
+    restart: unless-stopped
+    depends_on:
+      init: { condition: service_completed_successfully }
+    environment:
+      MARIADB_DATABASE: slurm_acct_db
+      MARIADB_USER: slurm
+      MARIADB_PASSWORD_FILE: /secrets/db_password
+      MARIADB_RANDOM_ROOT_PASSWORD: "1"
+    command: ["--innodb-buffer-pool-size=256M", "--innodb-lock-wait-timeout=900", "--innodb-log-file-size=64M"]
+    volumes:
+      - secrets:/secrets:ro
+      - dbdata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  control:
+    <<: *node
+    hostname: control
+    command: ["control"]
+    depends_on:
+      init: { condition: service_completed_successfully }
+      mariadb: { condition: service_healthy }
+
+  compute1: &compute
+    <<: *node
+    hostname: compute1
+    command: ["compute"]
+    # Solo los nodos de cálculo: Apptainer necesita user namespaces y Docker los bloquea por defecto.
+    privileged: true
+  compute2:
+    <<: *compute
+    hostname: compute2
+  compute3:
+    <<: *compute
+    hostname: compute3
+
+  login:
+    <<: *node
+    hostname: login
+    command: ["login"]
+    ports:
+      - "127.0.0.1:2222:22"
+
+volumes:
+  secrets:
+  home:
+  images:
+  dbdata:

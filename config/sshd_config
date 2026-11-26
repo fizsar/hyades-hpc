@@ -1,0 +1,10 @@
+Port 22
+HostKey /secrets/ssh_host_ed25519_key
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+UsePAM no
+AllowUsers alice bob
+X11Forwarding no
+AuthorizedKeysFile .ssh/authorized_keys
