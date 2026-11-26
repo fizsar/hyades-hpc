@@ -17,6 +17,12 @@ if [ ! -f $S/.initialized ]; then
   touch $S/.initialized
 fi
 
+# Secretos añadidos en fases posteriores: se crean si faltan, también en un clúster ya iniciado
+if [ ! -f $S/grafana_password ]; then
+  head -c 18 /dev/urandom | od -An -tx1 | tr -d ' \n' > $S/grafana_password
+  chmod 0600 $S/grafana_password
+fi
+
 # Homes de los usuarios (volumen compartido montado en /home en todos los nodos)
 for u in alice bob; do
   h=/home/$u

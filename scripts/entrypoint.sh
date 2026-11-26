@@ -11,6 +11,11 @@ start_munge() {
   until munge -n >/dev/null 2>&1; do sleep 0.3; done
 }
 
+start_node_exporter() {
+  # métricas del nodo; usuario sin privilegios
+  runuser -u nobody -- node_exporter --web.listen-address=:9100 --log.level=warn &
+}
+
 case "$ROLE" in
   init)
     exec /opt/hyades/init.sh
@@ -18,6 +23,7 @@ case "$ROLE" in
 
   control)
     start_munge
+    start_node_exporter
     install -d -o slurm -g slurm -m 0755 /run/slurm
     # slurmdbd.conf con la contraseña de la BD (generada en el primer arranque)
     sed "s|@DBPASS@|$(cat /secrets/db_password)|" /opt/hyades/slurmdbd.conf.tmpl > /etc/slurm/slurmdbd.conf
@@ -26,11 +32,14 @@ case "$ROLE" in
     runuser -u slurm -- slurmdbd -D -v &
     until runuser -u slurm -- sacctmgr -n show cluster >/dev/null 2>&1; do sleep 1; done
     runuser -u slurm -- bash /opt/hyades/accounting.sh
+    # exporter de Slurm (consulta squeue/sinfo con el usuario slurm)
+    runuser -u slurm -- prometheus-slurm-exporter -web.listen-address=:9092 >/dev/null 2>&1 &
     exec runuser -u slurm -- slurmctld -D -v
     ;;
 
   compute)
     start_munge
+    start_node_exporter
     install -d -m 0755 /run/slurm
     mkdir -p /sys/fs/cgroup/system.slice   # slurmd (cgroup v2, sin systemd) cuelga de aquí
     # slurmd necesita root para lanzar los trabajos con la identidad de cada usuario
@@ -39,6 +48,7 @@ case "$ROLE" in
 
   login)
     start_munge
+    start_node_exporter
     install -d -m 0755 /run/sshd
     exec /usr/sbin/sshd -D -e -f /opt/hyades/sshd_config
     ;;
