@@ -1,0 +1,15 @@
+# Imagen Apptainer de ejemplo: PyTorch (CPU) + MNIST. Mismo Rocky Linux 9 que el clúster.
+# SPDX-License-Identifier: AGPL-3.0-only
+Bootstrap: docker
+From: rockylinux/rockylinux@sha256:bb5755f96bec05ff26165e779ec843d7167544be9e50770508f307019a6d05c4
+
+%post
+    dnf -y install python3.12 python3.12-pip && dnf clean all
+    python3.12 -m pip install --no-cache-dir torch==2.15.0 torchvision==0.29.2 numpy \
+        --extra-index-url https://download.pytorch.org/whl/cpu
+    # el conjunto de datos va dentro de la imagen: los nodos de cálculo no necesitan Internet
+    python3.12 -c "from torchvision import datasets as d; d.MNIST(\"/opt/mnist\", train=True, download=True); d.MNIST(\"/opt/mnist\", train=False, download=True)"
+
+%labels
+    Author Hyades
+    Description PyTorch CPU + MNIST for the Hyades lab cluster
