@@ -3,3 +3,5 @@
 *.out
 *.sif
 secrets/
+web/node_modules/
+web/dist/

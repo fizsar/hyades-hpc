@@ -1,0 +1,28 @@
+== bob lanza MNIST (PyTorch en Apptainer); alice lanza pi (MPI, 3 nodos) ==
+pi = trabajo 10, MNIST = trabajo 9
+
+== squeue ==
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+                 9     batch    mnist      bob  R       0:05      1 compute1
+                10     debug   pi-mpi    alice PD       0:00      3 (Resources)
+
+== salida de MNIST ==
+host=compute1 torch=2.15.0+cpu threads=2 train=20000 epochs=2
+epoch 1/2  loss=0.3819  test_acc=0.9635  t=7s
+epoch 2/2  loss=0.1115  test_acc=0.9734  t=14s
+
+== salida de pi ==
+Nodos: compute[1-3]
+rango 5/6 en compute3: parcial = 0.523598770182
+rango 4/6 en compute3: parcial = 0.523598771015
+rango 1/6 en compute1: parcial = 0.523598778515
+rango 3/6 en compute2: parcial = 0.523598776848
+rango 0/6 en compute1: parcial = 0.523598779348
+rango 2/6 en compute2: parcial = 0.523598777682
+pi ~= 3.141592653590 (error 1.73e-13) con 400000000 intervalos, 0.32 s
+
+== sacct ==
+JobID           JobName   User Partition    QOS Alloc    Elapsed      State ExitCode 
+------------ ---------- ------ --------- ------ ----- ---------- ---------- -------- 
+9                 mnist    bob     batch  batch     2   00:00:22  COMPLETED      0:0 
+10               pi-mpi  alice     debug  debug     6   00:00:03  COMPLETED      0:0 

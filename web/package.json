@@ -1,0 +1,16 @@
+{
+  "name": "hyades-web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Static site for Hyades, a miniature HPC cluster lab (self-hosted, no third parties at runtime)",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "7.1.12"
+  }
+}

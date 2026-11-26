@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hyades — mini clúster HPC de laboratorio</title>
+  <meta name="description" content="Hyades: a miniature HPC cluster lab (Slurm, MPI, Apptainer, PyTorch, Prometheus, Grafana) in Docker Compose. A portfolio project, not a supercomputer.">
+  <meta name="theme-color" content="#05060b">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="./fonts/jetbrains-mono-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+  <script type="module" src="./src/main.js"></script>
+</head>
+<body>
+  <canvas id="sky" aria-hidden="true"></canvas>
+
+  <header class="top">
+    <a class="brand" href="https://fizsar.com" rel="noopener"><span class="dim">~/</span>fizsar <span class="dim">/</span> <span class="star">✦</span> hyades</a>
+    <nav aria-label="main">
+      <a href="#arch" data-i18n="nav.arch">arquitectura</a>
+      <a href="#demo" data-i18n="nav.demo">demo</a>
+      <a href="#qos" data-i18n="nav.qos">QoS</a>
+      <a href="#learn" data-i18n="nav.learn">qué se aprende</a>
+      <a href="#limits" data-i18n="nav.limits">límites</a>
+      <span class="lang" role="group" aria-label="language">
+        <button type="button" data-lang="es" aria-pressed="true">ES</button><span class="dim">/</span><button type="button" data-lang="en" aria-pressed="false">EN</button>
+      </span>
+    </nav>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="hero-copy">
+      <p class="prompt"><span class="dim">$</span> make up <span class="dim">&amp;&amp;</span> make demo<span class="cursor" aria-hidden="true">▌</span></p>
+      <h1>Hyades</h1>
+      <p class="sub" data-i18n="hero.sub">Mini clúster HPC de laboratorio</p>
+      <p class="why" data-i18n="hero.why"></p>
+      <div class="note" role="note">
+        <strong data-i18n="hero.note.t">Proyecto de portfolio</strong>
+        <span data-i18n="hero.note.b"></span>
+      </div>
+      <p class="ctas">
+        <a class="btn" href="#arch" data-i18n="hero.cta1">Ver la arquitectura</a>
+        <a class="btn ghost" href="#demo" data-i18n="hero.cta2">Ver la demo</a>
+        <a class="btn ghost" href="https://github.com/fizsar/hyades-hpc" rel="noopener">GitHub ↗</a>
+      </p>
+    </div>
+    <figure class="cluster" id="cluster">
+      <svg id="cluster-svg" viewBox="0 0 900 800" role="group" aria-labelledby="cluster-cap"></svg>
+      <div id="cluster-tip" class="tip" role="status" hidden></div>
+      <figcaption id="cluster-cap" class="cap" data-i18n="cluster.cap"></figcaption>
+    </figure>
+  </section>
+
+  <main>
+    <section id="arch" class="panel">
+      <h2><span class="dim">##</span> <span data-i18n="arch.h">Arquitectura</span></h2>
+      <p class="lede" data-i18n="arch.intro"></p>
+      <div id="arch-wrap" class="arch-wrap"></div>
+      <div id="arch-chips" class="chips" role="group" data-i18n-aria="arch.chips"></div>
+      <div id="arch-info" class="info" aria-live="polite"></div>
+    </section>
+
+    <section id="demo" class="panel">
+      <h2><span class="dim">##</span> <span data-i18n="demo.h">Una demo real</span></h2>
+      <p class="lede" data-i18n-html="demo.intro"></p>
+      <div class="term">
+        <div class="term-bar">
+          <span class="dim">~/hyades-hpc</span>
+          <button id="replay" class="btn ghost small" type="button" data-i18n="demo.replay">Repetir</button>
+        </div>
+        <pre id="term" class="term-body" aria-label="make demo" tabindex="0"></pre>
+      </div>
+      <p class="fixed" data-i18n="demo.note"></p>
+    </section>
+
+    <section id="monitoring" class="panel">
+      <h2><span class="dim">##</span> <span data-i18n="mon.h">Monitorización</span></h2>
+      <p class="lede" data-i18n="mon.intro"></p>
+      <figure class="shot">
+        <img src="./img/grafana.png" width="1500" height="950" loading="lazy" alt="" data-i18n-alt="mon.alt">
+      </figure>
+    </section>
+
+    <section id="qos" class="panel">
+      <h2><span class="dim">##</span> <span data-i18n="qos.h">Caso práctico: «¿por qué mi trabajo está pendiente?»</span></h2>
+      <p class="lede" data-i18n-html="qos.p1"></p>
+      <pre class="code"><code>$ squeue
+ JOBID PARTITION   NAME  USER ST TIME NODES NODELIST(REASON)
+     1     debug pi-mpi alice PD 0:00     3 (QOSMaxCpuPerUserLimit)</code></pre>
+      <h3 data-i18n="qos.h2">Diagnóstico</h3>
+      <pre class="code"><code>scontrol show job 1 | grep -E 'QOS|Partition|NumCPUs'   # QOS=batch, 6 CPUs
+sacctmgr show qos format=name,priority,maxtrespu,maxjobspu,maxwall
+sacctmgr show assoc where user=alice format=user,account,defaultqos,qos</code></pre>
+      <p class="lede" data-i18n-html="qos.p2"></p>
+      <ol class="fixes">
+        <li data-i18n-html="qos.f1"></li>
+        <li data-i18n-html="qos.f2"></li>
+      </ol>
+      <p class="lede" data-i18n-html="qos.p3"></p>
+    </section>
+
+    <section id="learn" class="panel">
+      <h2><span class="dim">##</span> <span data-i18n="learn.h">Qué aprende un administrador con cada pieza</span></h2>
+      <table class="learn"><tbody id="learn-body"></tbody></table>
+    </section>
+
+    <section id="limits" class="panel">
+      <h2><span class="dim">##</span> <span data-i18n="limits.h">Limitaciones</span></h2>
+      <p class="lede" data-i18n="limits.intro"></p>
+      <ul id="limits-list" class="limits"></ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <a href="https://fizsar.com" rel="noopener" class="logo"><img src="./img/fs-symbol.svg" width="56" height="49" alt="FS · fizsar"></a>
+    <p>
+      <a href="https://github.com/fizsar/hyades-hpc" rel="noopener" data-i18n="foot.repo">Código en GitHub</a>
+      <span class="dim">·</span> AGPL-3.0-only
+      <span class="dim">·</span> <span data-i18n="foot.lab">Un laboratorio, no un supercomputador.</span>
+    </p>
+    <p class="dim small" data-i18n="foot.src"></p>
+  </footer>
+</body>
+</html>
