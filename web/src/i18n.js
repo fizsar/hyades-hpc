@@ -11,7 +11,7 @@ export const dict = {
     'hero.note.t': 'Proyecto de portfolio',
     'hero.note.b': 'Un laboratorio que reproduce la arquitectura de un centro HPC (como el FinisTerrae del CESGA). No es un supercomputador.',
     'hero.cta1': 'Ver la arquitectura', 'hero.cta2': 'Ver la demo',
-    'cluster.cap': 'Posiciones reales (J2000) de las estrellas principales de las Híades. Aldebarán se ve en la misma dirección, pero no pertenece al cúmulo.',
+    'cluster.cap': 'Posiciones reales (J2000) de las estrellas principales de las Híades. θ¹ y θ² forman una estrella doble real, por eso casi se solapan. La V se cierra en Aldebarán (línea de puntos): se ve en la misma dirección, pero no pertenece al cúmulo.',
     'tip.hint': 'ver en la arquitectura →', 'cluster.ald': 'no es del cúmulo',
 
     'arch.h': 'Arquitectura',
@@ -89,7 +89,7 @@ export const dict = {
     'hero.note.t': 'A portfolio project',
     'hero.note.b': 'A lab that reproduces the architecture of an HPC centre (like CESGA’s FinisTerrae). It is not a supercomputer.',
     'hero.cta1': 'See the architecture', 'hero.cta2': 'Watch the demo',
-    'cluster.cap': 'Real positions (J2000) of the main stars of the Hyades. Aldebaran lies along the same line of sight but is not a member of the cluster.',
+    'cluster.cap': 'Real positions (J2000) of the main stars of the Hyades. θ¹ and θ² are a real double star, which is why they almost overlap. The V closes at Aldebaran (dotted line): it lies along the same line of sight but is not a member of the cluster.',
     'tip.hint': 'see it in the architecture →', 'cluster.ald': 'not in the cluster',
 
     'arch.h': 'Architecture',

@@ -23,6 +23,16 @@ function lineNode(text) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
+// Tell the cluster drawing what the terminal just showed, so the green packets match:
+// jobs submitted → login to control; a job turns R on a node (or nodes) → control to them.
+function flows(text) {
+  const go = (node, dir, delay = 0) => window.dispatchEvent(new CustomEvent('hyades:flow', { detail: { node, dir, delay } }))
+  if (text.startsWith('pi = trabajo')) { go('login', 'in'); go('login', 'in', 550) } // bob's and alice's sbatch
+  const m = text.match(/\sR\s+\d+:\d+\s+\d+\s+(compute\d)/)                          // squeue row in state R
+  if (m) go(m[1], 'out')
+  if (text.startsWith('== salida de pi')) for (const n of [1, 2, 3]) go(`compute${n}`, 'out', (n - 1) * 160) // pi starts on all 3
+}
+
 export function initTerminal(pre, button, reduced) {
   let run = 0
   const cursor = document.createElement('span'); cursor.className = 'tcur'; cursor.textContent = '▌'
@@ -48,6 +58,7 @@ export function initTerminal(pre, button, reduced) {
       const row = lineNode(text)
       cursor.remove(); row.append(cursor); pre.append(row)
       pre.scrollTop = pre.scrollHeight
+      flows(text)
       let d = 55
       if (text.startsWith('==')) d = 650
       else if (text.startsWith('epoch')) d = 1300
