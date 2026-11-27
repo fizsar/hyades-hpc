@@ -2,6 +2,8 @@
 
 [Español](README.es.md) · English
 
+**Live demo:** <https://hyades.fizsar.com>
+
 > **This is a lab and a portfolio project, not a supercomputer.** Everything runs
 > as containers on one machine and shares its CPU, memory and kernel. Hyades
 > reproduces the *architecture* of an HPC centre (such as CESGA's FinisTerrae) so
